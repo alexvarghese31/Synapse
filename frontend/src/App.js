@@ -1,75 +1,57 @@
 import React, { useState } from 'react';
-import LandingPage from './components/LandingPage';
-import InputForm from './components/InputForm';
-import ResultDisplay from './components/ResultDisplay';
+import LandingPage from './LandingPage.js'; // Assuming LandingPage is your initial component
+import InputForm from './components/InputForm.js'; // Your InputForm component
+import ResultDisplay from './components/ResultDisplay.js'; // Your ResultDisplay component
 
 function App() {
-  // State to manage the current view: 'landing', 'form', 'result'
-  const [currentView, setCurrentView] = useState('landing');
-  // State to store the prediction result
+  const [currentPage, setCurrentPage] = useState('landing'); // 'landing', 'form', 'result'
   const [predictionResult, setPredictionResult] = useState(null);
-  // State to show loading status
-  const [isLoading, setIsLoading] = useState(false);
-  // State to store any error messages
-  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false); // New state for loading
+  const [error, setError] = useState(null); // New state for error messages
 
-  // Function to handle form submission
-  const handleSubmit = async (formData) => {
-    setIsLoading(true); // Set loading to true
-    setError(null); // Clear previous errors
-    try {
-      // Replace with your actual backend API endpoint
-      const response = await fetch('http://localhost:5000/predict', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        // If the response is not OK (e.g., 400, 500 status)
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Something went wrong with the prediction.');
-      }
-
-      const data = await response.json();
-      setPredictionResult(data.prediction); // Assuming your backend returns { prediction: "..." }
-      setCurrentView('result'); // Switch to result view
-    } catch (err) {
-      console.error('Prediction error:', err);
-      setError(err.message || 'Failed to get prediction. Please try again.');
-    } finally {
-      setIsLoading(false); // Set loading to false regardless of success or failure
-    }
+  const handleStartAnalysis = () => {
+    setCurrentPage('form');
+    setError(null); // Clear errors when navigating to form
   };
 
-  // Function to reset the application to the landing page
-  const resetApp = () => {
-    setCurrentView('landing');
+  const handleFormSubmit = (prediction) => {
+    setPredictionResult(prediction);
+    setCurrentPage('result');
+  };
+
+  const handleBackToForm = () => {
+    setCurrentPage('form');
     setPredictionResult(null);
-    setError(null);
+    setError(null); // Clear errors when going back
+  };
+
+  const handleBackToHome = () => {
+    setCurrentPage('landing');
+    setPredictionResult(null);
+    setError(null); // Clear errors when going back
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      {currentView === 'landing' && (
-        <LandingPage onStart={() => setCurrentView('form')} />
+    <div className="App">
+      {currentPage === 'landing' && (
+        <LandingPage onStartAnalysis={handleStartAnalysis} />
       )}
 
-      {currentView === 'form' && (
+      {currentPage === 'form' && (
         <InputForm
-          onSubmit={handleSubmit}
-          onBack={() => setCurrentView('landing')}
+          onSubmit={handleFormSubmit}
+          onBack={handleBackToHome} // Or handleBackToLanding if you prefer
           isLoading={isLoading}
           error={error}
+          setIsLoading={setIsLoading} // Pass the setter
+          setError={setError}       // Pass the setter
         />
       )}
 
-      {currentView === 'result' && (
+      {currentPage === 'result' && (
         <ResultDisplay
           prediction={predictionResult}
-          onReset={resetApp}
+          onBack={handleBackToForm} // Or handleBackToForm if you want to re-enter data
         />
       )}
     </div>
