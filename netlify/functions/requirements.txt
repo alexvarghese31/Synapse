@@ -1,0 +1,2 @@
+joblib
+scikit-learn # Or any other specific library your model relies on (e.g., numpy, pandas)
