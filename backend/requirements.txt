@@ -1,0 +1,6 @@
+Flask==2.3.2
+Flask-Cors==3.0.10
+scikit-learn==1.3.0 # IMPORTANT: Use the exact version you trained your model with!
+pandas==2.0.3
+numpy==1.24.3
+joblib==1.3.2

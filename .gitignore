@@ -1,0 +1,78 @@
+# .gitignore for Synapse-Project
+
+# Python specific ignores (for the 'backend' folder)
+# =================================================
+# Compiled Python files
+backend/__pycache__/
+backend/*.pyc
+backend/*.pyo
+backend/*.pyd
+
+# Virtual environments
+backend/env/
+backend/venv/
+
+# Jupyter Notebook checkpoints
+backend/.ipynb_checkpoints/
+
+# Test cache files
+backend/.pytest_cache/
+
+# Python package build artifacts
+backend/*.egg-info/
+backend/build/
+backend/dist/
+
+# Generated model file (assuming model.joblib is generated and not source code)
+backend/model.joblib
+
+# Log files
+backend/*.log
+
+# Environment variables (crucial to ignore sensitive info)
+# This ignores .env files in the root and within specific subdirectories
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+backend/.env # If you have a .env file specifically in the backend
+
+# Node.js / React specific ignores (for the 'frontend' folder)
+# =========================================================
+# Node module dependencies
+frontend/node_modules/
+
+# React build output directory
+frontend/build/
+
+# Bundler cache files (e.g., Parcel)
+frontend/.parcel-cache/
+
+# NPM/Yarn debug logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Operating System specific ignores
+# =================================
+.DS_Store    # macOS specific
+Thumbs.db    # Windows thumbnail cache
+ehthumbs.db  # Windows media thumbnail cache
+Desktop.ini  # Windows folder customization
+
+# IDE specific ignores (add more if you use other IDEs)
+# ====================================================
+.vscode/     # VS Code specific files (optional, can be useful to share settings)
+.idea/       # IntelliJ / PyCharm specific files
+
+# Database files (if you were using local databases like SQLite)
+# =============================================================
+*.sqlite3
+*.db
+
+# Other common temporary files
+# ============================
+*.tmp
+*.bak
+*.swp
