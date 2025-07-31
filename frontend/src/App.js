@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import LandingPage from './LandingPage.js'; // Assuming LandingPage is your initial component
+import LandingPage from './components/LandingPage.js'; // Corrected path: LandingPage is in components folder
 import InputForm from './components/InputForm.js'; // Your InputForm component
 import ResultDisplay from './components/ResultDisplay.js'; // Your ResultDisplay component
 
