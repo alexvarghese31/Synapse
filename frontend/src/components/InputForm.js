@@ -38,7 +38,7 @@ const InputField = memo(({ label, name, type = "text", options = null, required 
   </div>
 ));
 
-function InputForm({ onSubmit, onBack, isLoading, error, setIsLoading, setError }) { // Added setIsLoading, setError props
+function InputForm({ onSubmit, onBack, isLoading, error }) {
   // State to hold form data
   const [formData, setFormData] = useState({
     gender: '',
@@ -57,6 +57,8 @@ function InputForm({ onSubmit, onBack, isLoading, error, setIsLoading, setError 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData((prevData) => {
+      // Removed the optimization: if (prevData[name] === value) return prevData;
+      // This ensures setFormData is always called, which helps maintain input focus.
       return {
         ...prevData,
         [name]: value,
@@ -64,54 +66,19 @@ function InputForm({ onSubmit, onBack, isLoading, error, setIsLoading, setError 
     });
   }, []);
 
-  // Handle form submission - NOW INCLUDES API CALL TO NETLIFY FUNCTION
-  const handleSubmit = async (e) => { // Made function async
+  // Handle form submission
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setIsLoading(true); // Set loading state
-    setError(null); // Clear previous errors
-
-    // Prepare data to send to the backend
-    // Ensure all fields match the EXPECTED_FEATURES in your predict.py
+    // Convert relevant fields to numbers
     const dataToSubmit = {
-      gender: formData.gender,
-      age: parseFloat(formData.age), // Convert to number
-      hypertension: parseInt(formData.hypertension), // Convert to integer
-      heart_disease: parseInt(formData.heart_disease), // Convert to integer
-      ever_married: formData.ever_married,
-      work_type: formData.work_type,
-      Residence_type: formData.Residence_type,
-      avg_glucose_level: parseFloat(formData.avg_glucose_level), // Convert to number
-      bmi: parseFloat(formData.bmi), // Convert to number
-      smoking_status: formData.smoking_status,
+      ...formData,
+      age: parseFloat(formData.age),
+      hypertension: parseInt(formData.hypertension),
+      heart_disease: parseInt(formData.heart_disease),
+      avg_glucose_level: parseFloat(formData.avg_glucose_level),
+      bmi: parseFloat(formData.bmi),
     };
-
-    try {
-      // API call to your Netlify Function
-      // The path is /.netlify/functions/ followed by your Python function file name (without .py)
-      const response = await fetch('/.netlify/functions/predict', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(dataToSubmit),
-      });
-
-      if (!response.ok) {
-        // If the server response is not OK (e.g., 400, 500)
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Prediction failed: Network response was not ok.');
-      }
-
-      const data = await response.json();
-      // Call the onSubmit prop with the prediction result (which is 'prediction' key from backend)
-      onSubmit(data.prediction);
-
-    } catch (err) {
-      console.error('Error during prediction:', err);
-      setError(err.message || 'An unexpected error occurred. Please try again.');
-    } finally {
-      setIsLoading(false); // Always set loading state to false after attempt
-    }
+    onSubmit(dataToSubmit);
   };
 
   // FormSection component definition (moved inside InputForm)
@@ -232,7 +199,7 @@ function InputForm({ onSubmit, onBack, isLoading, error, setIsLoading, setError 
             </FormSection>
 
             {/* Lifestyle Information */}
-            <FormSection title="Lifestyle & Environment" emoji="🏠">
+            <FormSection title="Lifestyle & Environment" emoji=" ">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <InputField
                   label="Residence Type"
